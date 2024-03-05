@@ -1,0 +1,41 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Sensitive Data ###
+spring.datasource.username=postgres
+spring.datasource.password=root
+upload.path = C:/Users/chern/IdeaProjects/Twister/uploads
+spring.mail.username=mysplendor7777@gmail.com
+spring.mail.password=xubxwmzikmyrwzcv
+recaptcha.secret=6LchdnYpAAAAAJZYnXkl7al532FpbQ51M811Wdjx
