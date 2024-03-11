@@ -1,0 +1,51 @@
+image: maven:3.8.4-openjdk-17
+
+default:
+  tags:
+    - windows
+
+variables:
+
+  MAVEN_CLI_OPTS: >-
+    --batch-mode
+    --errors
+    --fail-at-end
+    --show-version
+    -DinstallAtEnd=true
+    -DdeployAtEnd=true"
+
+  MAVEN_OPTS: >-
+    -Dhttps.protocols=TLSv1.2
+    -Dmaven.repo.local=.m2/repository
+    -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+    -Dorg.slf4j.simpleLogger.showDateTime=true
+
+stages:
+  - build
+  - test
+
+build-java-project:
+  stage: build
+
+  cache:
+    key: "maven-$CI_COMMIT_REF_SLUG"
+    paths:
+      - .m2/repository
+  script:
+    - cd
+    - mvn $MAVEN_CLI_OPTS package -DskipTests=true
+  artifacts:
+    name: "Maven artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
+    paths:
+      - "**/target"
+
+test-java-project:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    when: always
+
+    reports:
+      junit:
+        - "**/target/surefire-reports/TEST-*.xml"
