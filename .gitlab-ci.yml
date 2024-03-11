@@ -1,5 +1,9 @@
 image: maven:3.8.4-openjdk-17
 
+default:
+  tags:
+    - windows
+
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2"
 
@@ -21,4 +25,3 @@ build:
 test:
   stage: test
   script: mvn test -B
-
