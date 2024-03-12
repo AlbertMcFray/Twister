@@ -3,9 +3,12 @@ package com.example.twister.Services;
 import com.example.twister.Domain.Entity.Enum.Role;
 import com.example.twister.Domain.Entity.User;
 import com.example.twister.Domain.Repositories.UserRepository;
+import com.example.twister.Services.EmailStrategy.ActivationEmailStrategy;
+import com.example.twister.Services.EmailStrategy.ResetPasswordEmailStrategy;
 import com.example.twister.Services.Exceptions.PasswordNotEqualException;
 import com.example.twister.Services.Exceptions.UserAlreadyExist;
 import com.example.twister.Services.Exceptions.WrongResetCodeException;
+import com.example.twister.Services.Interfaces.Strategy.EmailStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,11 +37,7 @@ public class RegistrationService {
         }
         passwordsNotEqual(user);
         user = createUser(user);
-        sendEmail(
-                user,
-                "Activation Code",
-                "Please, visit next link",
-                "http://localhost:8080/api/v1/registration/activate/" + user.getActivationCode());
+        sendEmail(new ActivationEmailStrategy(emailService), user);
         return true;
     }
 
@@ -48,21 +47,8 @@ public class RegistrationService {
         }
     }
 
-    private void sendEmail(User user, String subject, String action, String actionUrl) {
-        if(!StringUtils.isEmptyOrWhitespace(user.getEmail())){
-            String message = String.format(
-                    "Hello, %s! \n" +
-                            "Welcome to Twister. This message especially for you!\n" +
-                            "We hope you're having a great day!\n\n" +
-                            "%s: %s \n\n" +
-                            "Best regards,\n\n" +
-                            "The Twister Developer",
-                    user.getUsername(),
-                    action,
-                    actionUrl
-            );
-            emailService.send(user.getEmail(), subject, message);
-        }
+    private void sendEmail(EmailStrategy emailStrategy, User user) {
+        emailStrategy.sendEmail(user);
     }
 
     private User createUser(User user) {
@@ -99,7 +85,7 @@ public class RegistrationService {
             String resetCode = UUID.randomUUID().toString();
             user.get().setResetCode(resetCode);
             userRepository.save(user.get());
-            sendEmail(user.get(), "Reset code", "Here is code to reset password: ", resetCode);
+            sendEmail(new ResetPasswordEmailStrategy(emailService), user.get());
         }
     }
 
