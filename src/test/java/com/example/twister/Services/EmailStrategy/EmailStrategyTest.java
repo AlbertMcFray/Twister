@@ -3,12 +3,12 @@ package com.example.twister.Services.EmailStrategy;
 import com.example.twister.Domain.Entity.User;
 import com.example.twister.Services.EmailServiceImpl;
 import com.example.twister.Services.Interfaces.Strategy.EmailStrategy;
+import com.example.twister.Services.Patterns.EmailStrategy.ActivationEmailStrategy;
+import com.example.twister.Services.Patterns.EmailStrategy.ResetPasswordEmailStrategy;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.verify;

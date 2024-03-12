@@ -3,18 +3,19 @@ package com.example.twister.Services;
 import com.example.twister.Domain.Entity.Enum.Role;
 import com.example.twister.Domain.Entity.User;
 import com.example.twister.Domain.Repositories.UserRepository;
-import com.example.twister.Services.EmailStrategy.ActivationEmailStrategy;
-import com.example.twister.Services.EmailStrategy.ResetPasswordEmailStrategy;
+import com.example.twister.Services.Interfaces.Factory.UserFactory;
+import com.example.twister.Services.Patterns.EmailStrategy.ActivationEmailStrategy;
+import com.example.twister.Services.Patterns.EmailStrategy.ResetPasswordEmailStrategy;
 import com.example.twister.Services.Exceptions.PasswordNotEqualException;
 import com.example.twister.Services.Exceptions.UserAlreadyExist;
 import com.example.twister.Services.Exceptions.WrongResetCodeException;
 import com.example.twister.Services.Interfaces.Strategy.EmailStrategy;
+import com.example.twister.Services.Patterns.UserFactory.DefaultUserFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -52,15 +53,8 @@ public class RegistrationService {
     }
 
     private User createUser(User user) {
-        user = User.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .password(passwordEncoder.encode(user.getPassword()))
-                .active(false)
-                .roles(Collections.singleton(Role.USER))
-                .activationCode(UUID.randomUUID().toString())
-                .created(LocalDate.now())
-                .build();
+        UserFactory userFactory = new DefaultUserFactory(passwordEncoder);
+        user = userFactory.createUser(user.getUsername(), user.getEmail(), user.getPassword());
         log.info("Saving new user with email: {}", user.getEmail());
         userRepository.save(user);
         return user;
